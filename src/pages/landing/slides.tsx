@@ -118,7 +118,7 @@ export function HeroSlide({ onRunDemo, onExplore, currentSlide }: HeroSlideProps
 
         <Reveal active={active} delay={0.28}>
           <p
-            className="mt-6 md:mt-8 mb-8 md:mb-10 max-w-2xl text-base md:text-lg"
+            className="mt-6 md:mt-8 mb-8 md:mb-10 max-w-2xl mx-auto text-base md:text-lg"
             style={{ color: 'rgba(234,242,234,0.78)', lineHeight: 1.6, textShadow: '0 1px 20px rgba(0,0,0,0.5)' }}
           >
             PatchFlow turns fragmented debugging into a coordinated workflow:
