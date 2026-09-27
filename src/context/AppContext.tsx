@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import type { DemoPhase } from '../types';
 
 interface DemoState {
@@ -7,6 +7,49 @@ interface DemoState {
   phaseIndex: number;
   logs: string[];
   progress: number;
+}
+
+const DEMO_STORAGE_KEY = 'patchflow-demo-state-v1';
+
+const DEFAULT_DEMO_STATE: DemoState = {
+  active: false,
+  phase: 'idle',
+  phaseIndex: -1,
+  logs: [],
+  progress: 0,
+};
+
+function loadPersistedDemoState(): DemoState {
+  try {
+    const raw = localStorage.getItem(DEMO_STORAGE_KEY);
+
+    if (!raw) {
+      return DEFAULT_DEMO_STATE;
+    }
+
+    const parsed = JSON.parse(raw);
+
+    if (
+      !parsed ||
+      typeof parsed !== 'object' ||
+      typeof parsed.active !== 'boolean' ||
+      typeof parsed.phaseIndex !== 'number' ||
+      typeof parsed.progress !== 'number' ||
+      !Array.isArray(parsed.logs)
+    ) {
+      return DEFAULT_DEMO_STATE;
+    }
+
+    return {
+      active: parsed.active,
+      phase: parsed.phase,
+      phaseIndex: parsed.phaseIndex,
+      logs: parsed.logs,
+      progress: parsed.progress,
+    };
+  } catch {
+    return DEFAULT_DEMO_STATE;
+  }
 }
 
 interface AppContextValue {
@@ -152,17 +195,20 @@ const PHASES: { phase: DemoPhase; label: string; duration: number; logs: string[
 ];
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [demo, setDemo] = useState<DemoState>({
-    active: false,
-    phase: 'idle',
-    phaseIndex: -1,
-    logs: [],
-    progress: 0,
-  });
+ const [demo, setDemo] = useState<DemoState>(() => loadPersistedDemoState());
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const logTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+useEffect(() => {
+  try {
+    localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(demo));
+  } catch {
+    // Ignore storage errors; the app continues to work normally.
+  }
+}, [demo]);
+
 
   const clearTimers = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -202,9 +248,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [runPhase]);
 
   const resetDemo = useCallback(() => {
-    clearTimers();
-    setDemo({ active: false, phase: 'idle', phaseIndex: -1, logs: [], progress: 0 });
-  }, []);
+  clearTimers();
+  localStorage.removeItem(DEMO_STORAGE_KEY);
+  setDemo(DEFAULT_DEMO_STATE);
+}, []);
 
   return (
     <AppContext.Provider value={{

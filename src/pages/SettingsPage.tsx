@@ -59,7 +59,7 @@ export default function SettingsPage() {
         </div>
         <h1 className="text-2xl font-bold mb-1" style={{ letterSpacing: '-0.02em' }}>About PatchFlow</h1>
         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          PatchFlow — Agentic Debugging Workflow · IBM Bob 2.0 Hackathon · January 2024
+          PatchFlow — Agentic Debugging Workflow · IBM Bob 2.0 Hackathon · September 2026
         </p>
       </div>
 
@@ -177,20 +177,37 @@ export default function SettingsPage() {
       </motion.div>
 
       {/* Transparency note */}
-      <motion.div
-        className="rounded-lg p-4 text-xs"
-        style={{ background: 'rgba(255, 176, 32, 0.05)', border: '1px solid rgba(255, 176, 32, 0.18)', color: 'var(--text-secondary)' }}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <span style={{ color: 'var(--warning)', fontWeight: 600 }}>Transparency</span>
-        Demo Mode uses deterministic sample artifacts from <span className="font-mono">src/data/</span>.
-        No external credentials, APIs, or network calls are required.
-        IBM Bob 2.0 was used to develop and run the actual debugging workflow;
-        the results are represented faithfully in the demo data.
-        All impact figures are labeled as illustrative demo data.
-      </motion.div>
+<motion.div
+  className="rounded-lg p-4"
+  style={{
+    background: 'rgba(255, 176, 32, 0.05)',
+    border: '1px solid rgba(255, 176, 32, 0.18)',
+  }}
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.2 }}
+>
+  <div
+    className="text-xs font-semibold mb-1"
+    style={{
+      color: 'var(--warning)',
+      letterSpacing: '0.08em',
+    }}
+  >
+    TRANSPARENCY
+  </div>
+
+  <p
+    className="text-xs leading-relaxed"
+    style={{ color: 'var(--text-secondary)' }}
+  >
+    Demo Mode uses deterministic sample artifacts from{' '}
+    <span className="font-mono">src/data/</span>. No external credentials,
+    APIs, or network calls are required. IBM Bob 2.0 was used to develop and
+    run the actual debugging workflow; the results are represented faithfully
+    in the demo data. All impact figures are labeled as illustrative demo data.
+  </p>
+</motion.div>
     </div>
   );
 }
