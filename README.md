@@ -99,7 +99,7 @@ tax pipeline refactor.
 # Prerequisites: Node.js 18+, npm 8+
 
 # 1. Clone the repository
-git clone https://github.com/your-username/patchflow
+git clone https://github.com/chrislincoln-ctrl/patchflow
 cd patchflow
 
 # 2. Install dependencies
