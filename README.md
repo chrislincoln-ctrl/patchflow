@@ -1,6 +1,6 @@
 # PatchFlow — Agentic Debugging Workflow
 
-> Built for the IBM Bob 2.0 Hackathon · January 2024
+> Built for the IBM Bob 2.0 Hackathon · September 2026
 
 [![Built with IBM Bob 2.0](https://img.shields.io/badge/Built%20with-IBM%20Bob%202.0-7C7CFF)](https://ibm.com)
 [![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev)
