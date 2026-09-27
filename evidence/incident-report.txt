@@ -1,0 +1,41 @@
+INCIDENT REPORT — INC-2024-0847
+================================
+Date: 2024-01-22
+Severity: HIGH
+Reporter: Payments Team <payments-team@orderflow.io>
+Affected Repository: OrderFlow API
+Affected Endpoint: POST /api/v2/checkout
+
+DESCRIPTION
+-----------
+Checkout endpoint returns an incorrect total when a discount coupon is applied
+to a cart containing products with differing tax rates.
+
+OBSERVED BEHAVIOUR
+------------------
+Cart: [iPhone Case (5% GST, ₹999), USB-C Cable (18% GST, ₹299)]
+Coupon: COUPON10 (10% off subtotal)
+Expected total: ₹1,214.51
+Actual total:   ₹1,227.00
+Discrepancy:    +₹12.49
+
+REPRODUCTION RATE
+-----------------
+~12% of coupon-bearing orders. Higher rate when order contains items
+from multiple tax jurisdictions.
+
+FIRST SEEN
+----------
+Commit b7f3d9a — 2024-01-18 15:32 UTC
+Author: dev-checkout@orderflow.io
+First affected order: 09:14 UTC, 27 minutes after deployment
+
+IMPACT
+------
+847 affected orders since January 18.
+Customers overcharged by ₹8 to ₹46 depending on cart composition.
+
+REQUESTED ACTION
+----------------
+Identify root cause. Provide minimal patch. Add regression test.
+Do not change API response schema or tax rate configuration.

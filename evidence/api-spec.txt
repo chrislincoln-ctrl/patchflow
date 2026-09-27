@@ -1,0 +1,71 @@
+ORDERFLOW API SPECIFICATION v2.4.1
+===================================
+Section 4 — Checkout and Pricing
+
+4.1 CHECKOUT ENDPOINT
+---------------------
+POST /api/v2/checkout
+
+Request body:
+  lineItems: LineItem[]
+  couponCode?: string
+  customerId: string
+
+Response:
+  subtotal: number
+  discount: number
+  tax: number
+  total: number
+  taxBreakdown: Record<string, number>
+
+4.2 LINE ITEM STRUCTURE
+-----------------------
+  id: string
+  productId: string
+  name: string
+  qty: number
+  unitPrice: number (in INR, excluding tax)
+  taxCode: string (e.g. "GST_5", "GST_18")
+
+4.3 PRICING PIPELINE
+--------------------
+4.3.1 COMPUTATION ORDER
+
+The checkout pricing pipeline MUST execute in the following order:
+
+  1. Compute line-item subtotals (qty × unitPrice)
+  2. Sum all line-item subtotals → subtotal
+  3. Apply coupon discount to subtotal → discountedSubtotal
+       discountedSubtotal = subtotal - computeDiscount(subtotal, coupon)
+  4. For each tax jurisdiction:
+       taxBase = sum of proportional line-item amounts in that jurisdiction
+                 (proportional to discountedSubtotal / subtotal ratio)
+       taxAmount = taxBase × taxRate
+  5. Sum all taxAmount values → totalTax
+  6. finalTotal = discountedSubtotal + totalTax
+
+4.3.2 RATIONALE
+
+Applying coupon before tax ensures the discount is reflected in the taxable
+base, as required by GST/VAT regulations in supported jurisdictions (India,
+EU, UK). Applying discount after tax overcharges the customer and constitutes
+a regulatory compliance risk.
+
+4.3.3 MULTI-JURISDICTION HANDLING
+
+When line items span multiple tax jurisdictions, each item's proportional
+contribution to discountedSubtotal must be used as the taxable base for
+that jurisdiction. This preserves the correct total tax amount while
+respecting per-jurisdiction rate differences.
+
+4.4 COUPON TYPES
+----------------
+  percent: discount = subtotal × (value / 100)
+  fixed:   discount = min(value, subtotal)
+
+4.5 TAX CODES
+-------------
+  GST_5:  5%  — essential goods
+  GST_12: 12% — standard goods
+  GST_18: 18% — consumer electronics, services
+  GST_28: 28% — luxury goods
